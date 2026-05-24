@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Account Card Page</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(124, 58, 237, 0.24), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.16), transparent 35%),
+        linear-gradient(135deg, #090912 0%, #151326 48%, #07070d 100%);
+      color: #fff;
+      padding: 26px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: auto;
+    }
+
+    .filter {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .filter button {
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(255, 255, 255, 0.07);
+      color: #d7d7e6;
+      padding: 11px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      transition: 0.3s ease;
+      backdrop-filter: blur(14px);
+    }
+
+    .filter button:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .filter button.active {
+      background: #ffffff;
+      color: #050505;
+      border-color: #ffffff;
+      box-shadow: 0 10px 28px rgba(255, 255, 255, 0.16);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+
+    .card {
+      position: relative;
+      padding: 12px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      transition: 0.35s ease;
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 2px;
+      border-radius: inherit;
+      background: linear-gradient(
+        90deg,
+        #ff004c,
+        #ffb703,
+        #00f5d4,
+        #38bdf8,
+        #7c3aed,
+        #ec4899,
+        #ff004c
+      );
+      background-size: 450% 100%;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .card:hover,
+    .card:focus,
+    .card:focus-within,
+    .card.is-active {
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.095);
+    }
+
+    .card:hover::before,
+    .card:focus::before,
+    .card:focus-within::before,
+    .card.is-active::before {
+      opacity: 1;
+      animation: gradientBorderMove 16s linear infinite;
+    }
+
+    @keyframes gradientBorderMove {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    .image-box,
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .image-box {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: 0.5s ease;
+    }
+
+    .card:hover .image-box img,
+    .card.is-active .image-box img {
+      transform: scale(1.06);
+    }
+
+    .content {
+      padding: 13px 3px 2px;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .info-row span {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      white-space: nowrap;
+    }
+
+    .bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .price,
+    .buy-btn {
+      width: 96px;
+      height: 44px;
+      border-radius: 999px;
+    }
+
+    .price {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      border: 1px solid rgba(134, 239, 172, 0.7);
+      box-shadow: 0 8px 24px rgba(34, 197, 94, 0.22);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .price span {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1;
+    }
+
+    .price strong {
+      margin-top: 4px;
+      font-size: 13px;
+      color: #ffffff;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .buy-btn {
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      outline: none;
+      cursor: pointer;
+      color: #050505;
+      font-size: 12px;
+      font-weight: 900;
+      background: #ffffff;
+      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.12);
+      transition: 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .buy-btn:hover {
+      color: #ffffff;
+      background: #050505;
+      border-color: rgba(255, 255, 255, 0.95);
+      transform: scale(1.05);
+    }
+
+    .buy-btn:active {
+      transform: scale(0.96);
+    }
+
+    .hide {
+      display: none;
+    }
+
+    @media (max-width: 1024px) {
+      .card-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 18px;
+      }
+
+      .filter {
+        gap: 9px;
+        margin-bottom: 22px;
+      }
+
+      .filter button {
+        padding: 9px 14px;
+        font-size: 13px;
+      }
+
+      .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+
+      .card {
+        padding: 9px;
+        border-radius: 20px;
+      }
+
+      .image-box {
+        border-radius: 14px;
+      }
+
+      .title {
+        font-size: 13px;
+        margin-bottom: 9px;
+      }
+
+      .info-row span {
+        font-size: 9px;
+        padding: 5px 6px;
+      }
+
+      .price,
+      .buy-btn {
+        width: 78px;
+        height: 40px;
+      }
+
+      .price span {
+        font-size: 9px;
+      }
+
+      .price strong {
+        font-size: 12px;
+      }
+
+      .buy-btn {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 14px;
+      }
+
+      .filter {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+      }
+
+      .filter::-webkit-scrollbar {
+        display: none;
+      }
+
+      .filter button {
+        white-space: nowrap;
+      }
+
+      .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .bottom {
+        gap: 7px;
+      }
+
+      .price,
+      .buy-btn {
+        width: 68px;
+        height: 38px;
+      }
+
+      .price strong {
+        font-size: 11px;
+      }
+
+      .buy-btn {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="filter">
+      <button class="active" data-filter="all">All</button>
+      <button data-filter="chatgpt">ChatGPT</button>
+      <button data-filter="gemini">Gemini</button>
+      <button data-filter="canva">Canva</button>
+      <button data-filter="youtube">YouTube Premium</button>
+    </div>
+
+    <div class="card-grid">
+
+      <div class="card" tabindex="0" data-category="chatgpt">
+        <div class="image-box">
+          <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=90" alt="ChatGPT Card">
+        </div>
+        <div class="content">
+          <div class="title">ChatGPT Plus Personal</div>
+          <div class="info-row">
+            <span>Validity: 30 Days</span>
+            <span>Guarantee</span>
+          </div>
+          <div class="bottom">
+            <div class="price">
+              <span>Price</span>
+              <strong>৳380</strong>
+            </div>
+            <button class="buy-btn" data-product="ChatGPT Account" data-plan="ChatGPT Plus Personal" data-price="380">Buy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" tabindex="0" data-category="gemini">
+        <div class="image-box">
+          <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=900&q=90" alt="Gemini Card">
+        </div>
+        <div class="content">
+          <div class="title">Gemini Pro Access</div>
+          <div class="info-row">
+            <span>Validity: 30 Days</span>
+            <span>Guarantee</span>
+          </div>
+          <div class="bottom">
+            <div class="price">
+              <span>Price</span>
+              <strong>৳380</strong>
+            </div>
+            <button class="buy-btn" data-product="Gemini Account" data-plan="Gemini Pro Access" data-price="380">Buy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" tabindex="0" data-category="canva">
+        <div class="image-box">
+          <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=900&q=90" alt="Canva Card">
+        </div>
+        <div class="content">
+          <div class="title">Canva Pro Premium</div>
+          <div class="info-row">
+            <span>Validity: 30 Days</span>
+            <span>Guarantee</span>
+          </div>
+          <div class="bottom">
+            <div class="price">
+              <span>Price</span>
+              <strong>৳250</strong>
+            </div>
+            <button class="buy-btn" data-product="Canva Account" data-plan="Canva Pro Premium" data-price="250">Buy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" tabindex="0" data-category="youtube">
+        <div class="image-box">
+          <img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=900&q=90" alt="YouTube Premium Card">
+        </div>
+        <div class="content">
+          <div class="title">YouTube Premium Personal</div>
+          <div class="info-row">
+            <span>Validity: 30 Days</span>
+            <span>Guarantee</span>
+          </div>
+          <div class="bottom">
+            <div class="price">
+              <span>Price</span>
+              <strong>৳180</strong>
+            </div>
+            <button class="buy-btn" data-product="YouTube Premium" data-plan="YouTube Premium Personal" data-price="180">Buy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" tabindex="0" data-category="chatgpt">
+        <div class="image-box">
+          <img src="https://images.unsplash.com/photo-1674027444485-cec3da58eef4?auto=format&fit=crop&w=900&q=90" alt="ChatGPT Team Card">
+        </div>
+        <div class="content">
+          <div class="title">ChatGPT Team Share</div>
+          <div class="info-row">
+            <span>Validity: 30 Days</span>
+            <span>Guarantee</span>
+          </div>
+          <div class="bottom">
+            <div class="price">
+              <span>Price</span>
+              <strong>৳699</strong>
+            </div>
+            <button class="buy-btn" data-product="ChatGPT Account" data-plan="ChatGPT Team Share" data-price="699">Buy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" tabindex="0" data-category="canva">
+        <div class="image-box">
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=90" alt="Canva Design Pack">
+        </div>
+        <div class="content">
+          <div class="title">Canva Design Pack</div>
+          <div class="info-row">
+            <span>Validity: 30 Days</span>
+            <span>Guarantee</span>
+          </div>
+          <div class="bottom">
+            <div class="price">
+              <span>Price</span>
+              <strong>৳320</strong>
+            </div>
+            <button class="buy-btn" data-product="Canva Account" data-plan="Canva Design Pack" data-price="320">Buy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" tabindex="0" data-category="gemini">
+        <div class="image-box">
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=900&q=90" alt="Gemini Advanced Card">
+        </div>
+        <div class="content">
+          <div class="title">Gemini Advanced Pack</div>
+          <div class="info-row">
+            <span>Validity: 30 Days</span>
+            <span>Guarantee</span>
+          </div>
+          <div class="bottom">
+            <div class="price">
+              <span>Price</span>
+              <strong>৳550</strong>
+            </div>
+            <button class="buy-btn" data-product="Gemini Account" data-plan="Gemini Advanced Pack" data-price="550">Buy</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" tabindex="0" data-category="youtube">
+        <div class="image-box">
+          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=90" alt="YouTube Family Card">
+        </div>
+        <div class="content">
+          <div class="title">YouTube Family Slot</div>
+          <div class="info-row">
+            <span>Validity: 30 Days</span>
+            <span>Guarantee</span>
+          </div>
+          <div class="bottom">
+            <div class="price">
+              <span>Price</span>
+              <strong>৳299</strong>
+            </div>
+            <button class="buy-btn" data-product="YouTube Premium" data-plan="YouTube Family Slot" data-price="299">Buy</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const whatsappNumber = "8801741815153";
+    const cards = document.querySelectorAll(".card");
+    const buyButtons = document.querySelectorAll(".buy-btn");
+    const filterButtons = document.querySelectorAll(".filter button");
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        cards.forEach((item) => item.classList.remove("is-active"));
+        card.classList.add("is-active");
+      });
+    });
+
+    buyButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+
+        const product = button.getAttribute("data-product");
+        const plan = button.getAttribute("data-plan");
+        const price = button.getAttribute("data-price");
+
+        const message = `আমি ${product} কিনতে চাই। যার প্রাইস ${price} টাকা। প্যাকেজ: ${plan}`;
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+        window.open(whatsappUrl, "_blank");
+      });
+    });
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const filterValue = button.getAttribute("data-filter");
+
+        filterButtons.forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+
+        cards.forEach((card) => {
+          const cardCategory = card.getAttribute("data-category");
+
+          if (filterValue === "all" || filterValue === cardCategory) {
+            card.classList.remove("hide");
+          } else {
+            card.classList.add("hide");
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
