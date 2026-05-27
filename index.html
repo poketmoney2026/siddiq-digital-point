@@ -4,74 +4,840 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Premium Account Cards</title>
+
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif}
-    :root{--glass:rgba(255,255,255,.075);--line:rgba(255,255,255,.12);--muted:#c7c7d4}
-    body{min-height:100vh;color:#fff;padding:28px;background:
-      radial-gradient(circle at 8% 5%,rgba(124,58,237,.32),transparent 32%),
-      radial-gradient(circle at 92% 12%,rgba(236,72,153,.18),transparent 28%),
-      radial-gradient(circle at 50% 105%,rgba(14,165,233,.18),transparent 32%),
-      linear-gradient(135deg,#070711 0%,#161326 50%,#06060d 100%);overflow-x:hidden}
-    body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent 75%)}
-    .container{width:100%;max-width:1200px;margin:auto;position:relative;z-index:1}
-    .filter{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
-    .filter button{border:1px solid var(--line);background:var(--glass);color:#e7e7f0;padding:11px 20px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:800;transition:.3s;backdrop-filter:blur(16px);white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
-    .filter button:hover{background:rgba(255,255,255,.13);color:#fff;transform:translateY(-1px)}
-    .filter button.active{background:#fff;color:#06060c;border-color:#fff;box-shadow:0 14px 34px rgba(255,255,255,.16)}
-    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
-    .card{position:relative;min-width:0;padding:12px;border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.095),rgba(255,255,255,.052));border:1px solid rgba(255,255,255,.11);box-shadow:0 20px 55px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(20px);overflow:hidden;cursor:pointer;outline:none;transition:.35s ease}
-    .card:before{content:"";position:absolute;inset:0;padding:2px;border-radius:inherit;background:linear-gradient(90deg,#ff004c,#ffb703,#00f5d4,#38bdf8,#7c3aed,#ec4899,#ff004c);background-size:450% 100%;opacity:0;transition:.35s;pointer-events:none;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
-    .card:after{content:"";position:absolute;inset:-45% -25% auto -25%;height:55%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:rotate(10deg);opacity:.55;pointer-events:none}
-    .card:hover,.card:focus,.card:focus-within,.card.is-active{transform:translateY(-6px);background:linear-gradient(180deg,rgba(255,255,255,.125),rgba(255,255,255,.06))}
-    .card:hover:before,.card:focus:before,.card:focus-within:before,.card.is-active:before{opacity:1;animation:borderMove 16s linear infinite}
-    @keyframes borderMove{0%{background-position:200% 0}100%{background-position:-200% 0}}
-    .img-box,.content{position:relative;z-index:1}.img-box{width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:18px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
-    .img-box:after{content:"";position:absolute;inset:auto 0 0;height:45%;background:linear-gradient(to top,rgba(0,0,0,.35),transparent);pointer-events:none}.img-box img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}.card:hover img,.card.is-active img{transform:scale(1.06)}
-    .stock{position:absolute;top:10px;right:10px;z-index:2;display:flex;align-items:center;gap:4px;padding:7px 10px;border-radius:999px;font-size:11px;font-weight:950;line-height:1;color:#fff;border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(14px);box-shadow:0 10px 25px rgba(0,0,0,.38);overflow:hidden;text-transform:capitalize}
-    .stock:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-120%);animation:fireShine 2.9s ease-in-out infinite}.stock span{position:relative;z-index:1}.stock.in{background:linear-gradient(135deg,rgba(22,163,74,.95),rgba(34,197,94,.82))}.stock.out{background:linear-gradient(135deg,rgba(220,38,38,.98),rgba(249,115,22,.86));box-shadow:0 10px 28px rgba(239,68,68,.38)}.stock.restock{background:linear-gradient(135deg,rgba(245,158,11,.98),rgba(239,68,68,.82));box-shadow:0 10px 28px rgba(245,158,11,.34)}
-    @keyframes fireShine{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
-    .content{padding:14px 3px 2px}.title{font-size:15px;font-weight:950;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.1px}.info{display:flex;justify-content:space-between;gap:8px;margin-bottom:14px;min-width:0}.info span{font-size:11px;font-weight:850;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}.bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.09)}
-    .price,.buy{width:96px;height:44px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:950;flex:0 0 auto}.price{background:linear-gradient(135deg,#16a34a,#22c55e);border:1px solid rgba(134,239,172,.75);box-shadow:0 8px 24px rgba(34,197,94,.24);color:#fff;font-size:16px}.buy{border:1px solid rgba(255,255,255,.92);background:#fff;color:#050505;font-size:15px;cursor:pointer;transition:.3s;box-shadow:0 8px 24px rgba(255,255,255,.13)}.buy:hover{background:#050505;color:#fff;transform:scale(1.05)}.buy:active{transform:scale(.96)}.buy.disabled{opacity:.48;cursor:not-allowed;pointer-events:none}.empty{grid-column:1/-1;padding:30px;text-align:center;border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);color:#d4d4d8}
-    @media(max-width:1100px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-    @media(max-width:768px){body{padding:18px}.filter{gap:9px;margin-bottom:22px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px;scrollbar-width:none}.filter::-webkit-scrollbar{display:none}.filter button{padding:9px 14px;font-size:13px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card{padding:9px;border-radius:21px}.img-box{border-radius:15px}.stock{top:7px;right:7px;padding:5px 7px;font-size:9px}.content{padding-top:11px}.title{font-size:13px;margin-bottom:9px}.info{gap:6px;margin-bottom:12px}.info span{font-size:9px;padding:5px 6px}.bottom{gap:7px;padding-top:10px}.price,.buy{width:78px;height:40px}.price{font-size:14px}.buy{font-size:13px}}
-    @media(max-width:430px){body{padding:14px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{padding:8px;border-radius:19px}.title{font-size:12px}.info span{font-size:8px;padding:5px 5px}.price,.buy{width:68px;height:38px}.price{font-size:13px}.buy{font-size:12px}}
-    @media(max-width:360px){.price,.buy{width:62px;height:36px}.price{font-size:12px}.buy{font-size:11px}.info span{font-size:7.5px}}
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Inter,Arial,sans-serif;
+    }
+
+    :root{
+      --glass:rgba(255,255,255,.075);
+      --line:rgba(255,255,255,.12);
+      --muted:#c7c7d4;
+    }
+
+    body{
+      min-height:100vh;
+      color:#fff;
+      padding:28px;
+      background:
+        radial-gradient(circle at 8% 5%,rgba(0,132,255,.34),transparent 32%),
+        radial-gradient(circle at 92% 12%,rgba(56,189,248,.22),transparent 28%),
+        radial-gradient(circle at 50% 105%,rgba(37,99,235,.28),transparent 34%),
+        linear-gradient(135deg,#020617 0%,#071a3d 48%,#030712 100%);
+      overflow-x:hidden;
+    }
+
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:42px 42px;
+      mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent 75%);
+    }
+
+    .container{
+      width:100%;
+      max-width:1200px;
+      margin:auto;
+      position:relative;
+      z-index:1;
+    }
+
+    .filter{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:28px;
+    }
+
+    .filter button{
+      border:1px solid var(--line);
+      background:var(--glass);
+      color:#e7e7f0;
+      padding:11px 20px;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:800;
+      transition:.3s;
+      backdrop-filter:blur(16px);
+      white-space:nowrap;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .filter button:hover{
+      background:rgba(255,255,255,.13);
+      color:#fff;
+      transform:translateY(-1px);
+    }
+
+    .filter button.active{
+      background:#fff;
+      color:#06060c;
+      border-color:#fff;
+      box-shadow:0 14px 34px rgba(255,255,255,.16);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:22px;
+    }
+
+    .card{
+      position:relative;
+      min-width:0;
+      padding:12px;
+      border-radius:26px;
+      background:linear-gradient(180deg,rgba(255,255,255,.095),rgba(255,255,255,.052));
+      border:1px solid rgba(255,255,255,.11);
+      box-shadow:
+        0 20px 55px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter:blur(20px);
+      overflow:hidden;
+      cursor:pointer;
+      outline:none;
+      transition:.35s ease;
+    }
+
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      padding:2px;
+      border-radius:inherit;
+      background:linear-gradient(
+        90deg,
+        #00e5ff,
+        #38bdf8,
+        #2563eb,
+        #1d4ed8,
+        #60a5fa,
+        #00e5ff
+      );
+      background-size:450% 100%;
+      opacity:0;
+      transition:.35s;
+      pointer-events:none;
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+    }
+
+    .card:after{
+      content:"";
+      position:absolute;
+      inset:-45% -25% auto -25%;
+      height:55%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+      transform:rotate(10deg);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .card:hover,
+    .card:focus,
+    .card:focus-within,
+    .card.is-active{
+      transform:translateY(-6px);
+      background:linear-gradient(180deg,rgba(255,255,255,.125),rgba(255,255,255,.06));
+    }
+
+    .card:hover:before,
+    .card:focus:before,
+    .card:focus-within:before,
+    .card.is-active:before{
+      opacity:1;
+      animation:borderMove 16s linear infinite;
+    }
+
+    @keyframes borderMove{
+      0%{background-position:200% 0}
+      100%{background-position:-200% 0}
+    }
+
+    .img-box,
+    .content{
+      position:relative;
+      z-index:1;
+    }
+
+    .img-box{
+      width:100%;
+      aspect-ratio:1/1;
+      overflow:hidden;
+      border-radius:18px;
+      background:rgba(255,255,255,.08);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+
+    .img-box:after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0;
+      height:45%;
+      background:linear-gradient(to top,rgba(0,0,0,.35),transparent);
+      pointer-events:none;
+    }
+
+    .img-box img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transition:.5s;
+    }
+
+    .card:hover img,
+    .card.is-active img{
+      transform:scale(1.06);
+    }
+
+    .stock{
+      position:absolute;
+      top:10px;
+      right:10px;
+      z-index:2;
+      display:flex;
+      align-items:center;
+      gap:4px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:950;
+      line-height:1;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.24);
+      backdrop-filter:blur(14px);
+      box-shadow:0 10px 25px rgba(0,0,0,.38);
+      overflow:hidden;
+      text-transform:capitalize;
+    }
+
+    .stock:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+      transform:translateX(-120%);
+      animation:fireShine 2.9s ease-in-out infinite;
+    }
+
+    .stock span{
+      position:relative;
+      z-index:1;
+    }
+
+    .stock.in{
+      background:linear-gradient(135deg,rgba(22,163,74,.95),rgba(34,197,94,.82));
+    }
+
+    .stock.out{
+      background:linear-gradient(135deg,rgba(220,38,38,.98),rgba(249,115,22,.86));
+      box-shadow:0 10px 28px rgba(239,68,68,.38);
+    }
+
+    .stock.restock{
+      background:linear-gradient(135deg,rgba(245,158,11,.98),rgba(239,68,68,.82));
+      box-shadow:0 10px 28px rgba(245,158,11,.34);
+    }
+
+    @keyframes fireShine{
+      0%,55%{transform:translateX(-120%)}
+      100%{transform:translateX(120%)}
+    }
+
+    .content{
+      padding:14px 3px 2px;
+    }
+
+    .title{
+      font-size:15px;
+      font-weight:950;
+      margin-bottom:10px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      letter-spacing:.1px;
+    }
+
+    .info{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:14px;
+      min-width:0;
+    }
+
+    .info span{
+      font-size:11px;
+      font-weight:850;
+      padding:6px 9px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.11);
+      white-space:nowrap;
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .bottom{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding-top:12px;
+      border-top:1px solid rgba(255,255,255,.09);
+    }
+
+    .price,
+    .buy{
+      width:96px;
+      height:44px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:950;
+      flex:0 0 auto;
+    }
+
+    .price{
+      background:linear-gradient(135deg,#16a34a,#22c55e);
+      border:1px solid rgba(134,239,172,.75);
+      box-shadow:0 8px 24px rgba(34,197,94,.24);
+      color:#fff;
+      font-size:16px;
+    }
+
+    .buy{
+      border:1px solid rgba(255,255,255,.92);
+      background:#fff;
+      color:#050505;
+      font-size:15px;
+      cursor:pointer;
+      transition:.3s;
+      box-shadow:0 8px 24px rgba(255,255,255,.13);
+    }
+
+    .buy:hover{
+      background:#050505;
+      color:#fff;
+      transform:scale(1.05);
+    }
+
+    .buy:active{
+      transform:scale(.96);
+    }
+
+    .buy.disabled{
+      opacity:.48;
+      cursor:not-allowed;
+      pointer-events:none;
+    }
+
+    .empty{
+      grid-column:1/-1;
+      padding:30px;
+      text-align:center;
+      border-radius:22px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:#d4d4d8;
+    }
+
+    @media(max-width:1100px){
+      .grid{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+      }
+    }
+
+    @media(max-width:768px){
+      body{
+        padding:18px;
+      }
+
+      .filter{
+        gap:9px;
+        margin-bottom:22px;
+        overflow-x:auto;
+        flex-wrap:nowrap;
+        padding-bottom:5px;
+        scrollbar-width:none;
+      }
+
+      .filter::-webkit-scrollbar{
+        display:none;
+      }
+
+      .filter button{
+        padding:9px 14px;
+        font-size:13px;
+      }
+
+      .grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:15px;
+      }
+
+      .card{
+        padding:9px;
+        border-radius:21px;
+      }
+
+      .img-box{
+        border-radius:15px;
+      }
+
+      .stock{
+        top:7px;
+        right:7px;
+        padding:5px 7px;
+        font-size:9px;
+      }
+
+      .content{
+        padding-top:11px;
+      }
+
+      .title{
+        font-size:13px;
+        margin-bottom:9px;
+      }
+
+      .info{
+        gap:6px;
+        margin-bottom:12px;
+      }
+
+      .info span{
+        font-size:9px;
+        padding:5px 6px;
+      }
+
+      .bottom{
+        gap:7px;
+        padding-top:10px;
+      }
+
+      .price,
+      .buy{
+        width:78px;
+        height:40px;
+      }
+
+      .price{
+        font-size:14px;
+      }
+
+      .buy{
+        font-size:13px;
+      }
+    }
+
+    @media(max-width:430px){
+      body{
+        padding:14px;
+      }
+
+      .grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+      }
+
+      .card{
+        padding:8px;
+        border-radius:19px;
+      }
+
+      .title{
+        font-size:12px;
+      }
+
+      .info span{
+        font-size:8px;
+        padding:5px 5px;
+      }
+
+      .price,
+      .buy{
+        width:68px;
+        height:38px;
+      }
+
+      .price{
+        font-size:13px;
+      }
+
+      .buy{
+        font-size:12px;
+      }
+    }
+
+    @media(max-width:360px){
+      .price,
+      .buy{
+        width:62px;
+        height:36px;
+      }
+
+      .price{
+        font-size:12px;
+      }
+
+      .buy{
+        font-size:11px;
+      }
+
+      .info span{
+        font-size:7.5px;
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="filter" id="filter"></div>
     <div class="grid" id="cards"></div>
   </div>
+
   <script>
-    const whatsappNumber="8801741815153";
-    const categories=[["all","All"],["chatgpt","ChatGPT"],["lovable","Lovable"],["gemini","Gemini"],["canva","Canva"],["youtube","YouTube Premium"],["prime","Prime Video"],["netflix","Netflix"],["capcut","CapCut Pro"]];
-    const products=[
-      {category:"chatgpt",title:"ChatGPT Go Share",product:"ChatGPT Account",plan:"ChatGPT Go Share",validity:"30 Days",guarantee:"Guarantee",price:99,stock:63,image:"images/chatgpt-go-share.png"},
-      {category:"chatgpt",title:"ChatGPT Plus Share",product:"ChatGPT Account",plan:"ChatGPT Plus Share",validity:"30 Days",guarantee:"Guarantee",price:149,stock:18,image:"images/chatgpt-plus-share.png"},
-      {category:"chatgpt",title:"ChatGPT Plus Personal",product:"ChatGPT Account",plan:"ChatGPT Plus Personal",validity:"30 Days",guarantee:"Guarantee",price:399,stock:47,image:"images/chatgpt-plus-personal.png"},
-      {category:"chatgpt",title:"ChatGPT Go Personal",product:"ChatGPT Account",plan:"ChatGPT Go Personal",validity:"30 Days",guarantee:"Guarantee",price:750,stock:"out",image:"images/chatgpt-go-personal.png"},
-      {category:"lovable",title:"Lovable Personal",product:"Lovable Account",plan:"Lovable Personal",validity:"30 Days",guarantee:"Guarantee",price:120,stock:17,image:"images/lovable-personal.png"},
-      {category:"gemini",title:"Gemini Pro",product:"Gemini Account",plan:"Gemini Pro",validity:"30 Days",guarantee:"Guarantee",price:49,stock:72,image:"images/gemini-pro.png"},
-      {category:"gemini",title:"Gemini Owner",product:"Gemini Account",plan:"Gemini Owner Account",validity:"30 Days",guarantee:"Guarantee",price:199,stock:"out",image:"images/gemini-owner.png"},
-      {category:"canva",title:"Canva Pro",product:"Canva Account",plan:"Canva Pro",validity:"30 Days",guarantee:"Guarantee",price:19,stock:88,image:"images/canva-pro.png"},
-      {category:"canva",title:"Canva Team Account",product:"Canva Account",plan:"Canva Team Account",validity:"30 Days",guarantee:"Guarantee",price:99,stock:"out",image:"images/canva-team-account.png"},
-      {category:"youtube",title:"YouTube Premium",product:"YouTube Premium",plan:"YouTube Premium",validity:"30 Days",guarantee:"Guarantee",price:49,stock:54,image:"images/youtube-premium.png"},
-      {category:"youtube",title:"YouTube Family",product:"YouTube Premium",plan:"YouTube Family",validity:"30 Days",guarantee:"Guarantee",price:199,stock:9,image:"images/youtube-family.png"},
-      {category:"prime",title:"Prime Video Individual",product:"Prime Video",plan:"Prime Video Individual",validity:"30 Days",guarantee:"Guarantee",price:49,stock:"restock",image:"images/prime-video-individual.png"},
-      {category:"prime",title:"Prime Video Owner",product:"Prime Video",plan:"Prime Video Owner",validity:"30 Days",guarantee:"Guarantee",price:99,stock:36,image:"images/prime-video-owner.png"},
-      {category:"netflix",title:"Netflix Individual",product:"Netflix Account",plan:"Netflix Individual",validity:"30 Days",guarantee:"Guarantee",price:99,stock:"out",image:"images/netflix-individual.png"},
-      {category:"netflix",title:"Netflix Owner",product:"Netflix Account",plan:"Netflix Owner",validity:"30 Days",guarantee:"Guarantee",price:199,stock:"out",image:"images/netflix-owner.png"},
-      {category:"capcut",title:"CapCut Pro Share",product:"CapCut Account",plan:"CapCut Pro Share",validity:"30 Days",guarantee:"Guarantee",price:49,stock:11,image:"images/capcut-pro-share.png"},
-      {category:"capcut",title:"CapCut Pro",product:"CapCut Account",plan:"CapCut Pro",validity:"30 Days",guarantee:"Guarantee",price:79,stock:17,image:"images/capcut-pro.png"}
+    const whatsappNumber = "8801741815153";
+
+    const categories = [
+      ["all","All"],
+      ["chatgpt","ChatGPT"],
+      ["lovable","Lovable"],
+      ["gemini","Gemini"],
+      ["canva","Canva"],
+      ["youtube","YouTube Premium"],
+      ["prime","Prime Video"],
+      ["netflix","Netflix"],
+      ["capcut","CapCut Pro"]
     ];
-    const filterBox=document.getElementById("filter"),cardBox=document.getElementById("cards");let activeCategory="all";
-    function stockData(s){if(s==="out")return{text:"🔥 Stock Out",cls:"out",disabled:true};if(s==="restock")return{text:"🔥 Restock",cls:"restock",disabled:false};return{text:`🔥 Stock ${s}`,cls:"in",disabled:false}}
-    function renderFilters(){filterBox.innerHTML=categories.map(([v,l])=>`<button class="${activeCategory===v?"active":""}" data-category="${v}">${l}</button>`).join("")}
-    function renderCards(){const list=products.map((p,i)=>({p,i})).filter(x=>activeCategory==="all"||x.p.category===activeCategory).sort((a,b)=>a.p.price-b.p.price);if(!list.length){cardBox.innerHTML='<div class="empty">No product found.</div>';return}cardBox.innerHTML=list.map(({p,i})=>{const st=stockData(p.stock);return `<div class="card" tabindex="0"><div class="img-box"><img src="${p.image}" alt="${p.title}"><div class="stock ${st.cls}"><span>${st.text}</span></div></div><div class="content"><div class="title">${p.title}</div><div class="info"><span>Validity: ${p.validity}</span><span>${p.guarantee}</span></div><div class="bottom"><div class="price">৳${p.price}</div><button class="buy ${st.disabled?"disabled":""}" data-index="${i}">${st.disabled?"Out":"Buy"}</button></div></div></div>`}).join("")}
-    filterBox.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;activeCategory=b.dataset.category;renderFilters();renderCards()});
-    cardBox.addEventListener("click",e=>{const buy=e.target.closest(".buy");if(buy&&!buy.classList.contains("disabled")){e.stopPropagation();const p=products[buy.dataset.index];const msg=`আমি ${p.product} কিনতে চাই। যার প্রাইস ${p.price} টাকা। প্যাকেজ: ${p.plan}`;window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`,"_blank");return}const card=e.target.closest(".card");if(!card)return;document.querySelectorAll(".card").forEach(c=>c.classList.remove("is-active"));card.classList.add("is-active")});
-    renderFilters();renderCards();
+
+    const products = [
+      {
+        category:"chatgpt",
+        title:"ChatGPT Go Share",
+        product:"ChatGPT Account",
+        plan:"ChatGPT Go Share",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:99,
+        stock:63,
+        image:"images/chatgpt-go-share.png"
+      },
+      {
+        category:"chatgpt",
+        title:"ChatGPT Plus Share",
+        product:"ChatGPT Account",
+        plan:"ChatGPT Plus Share",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:149,
+        stock:18,
+        image:"images/chatgpt-plus-share.png"
+      },
+      {
+        category:"chatgpt",
+        title:"ChatGPT Plus Personal",
+        product:"ChatGPT Account",
+        plan:"ChatGPT Plus Personal",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:399,
+        stock:47,
+        image:"images/chatgpt-plus-personal.png"
+      },
+      {
+        category:"chatgpt",
+        title:"ChatGPT Go Personal",
+        product:"ChatGPT Account",
+        plan:"ChatGPT Go Personal",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:750,
+        stock:"out",
+        image:"images/chatgpt-go-personal.png"
+      },
+      {
+        category:"lovable",
+        title:"Lovable Personal",
+        product:"Lovable Account",
+        plan:"Lovable Personal",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:120,
+        stock:17,
+        image:"images/lovable-personal.png"
+      },
+      {
+        category:"gemini",
+        title:"Gemini Pro",
+        product:"Gemini Account",
+        plan:"Gemini Pro",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:49,
+        stock:72,
+        image:"images/gemini-pro.png"
+      },
+      {
+        category:"gemini",
+        title:"Gemini Owner",
+        product:"Gemini Account",
+        plan:"Gemini Owner Account",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:199,
+        stock:"out",
+        image:"images/gemini-owner.png"
+      },
+      {
+        category:"canva",
+        title:"Canva Pro",
+        product:"Canva Account",
+        plan:"Canva Pro",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:19,
+        stock:88,
+        image:"images/canva-pro.png"
+      },
+      {
+        category:"canva",
+        title:"Canva Team Account",
+        product:"Canva Account",
+        plan:"Canva Team Account",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:99,
+        stock:"out",
+        image:"images/canva-team-account.png"
+      },
+      {
+        category:"youtube",
+        title:"YouTube Premium",
+        product:"YouTube Premium",
+        plan:"YouTube Premium",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:49,
+        stock:54,
+        image:"images/youtube-premium.png"
+      },
+      {
+        category:"youtube",
+        title:"YouTube Family",
+        product:"YouTube Premium",
+        plan:"YouTube Family",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:199,
+        stock:9,
+        image:"images/youtube-family.png"
+      },
+      {
+        category:"prime",
+        title:"Prime Video Individual",
+        product:"Prime Video",
+        plan:"Prime Video Individual",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:49,
+        stock:"restock",
+        image:"images/prime-video-individual.png"
+      },
+      {
+        category:"prime",
+        title:"Prime Video Owner",
+        product:"Prime Video",
+        plan:"Prime Video Owner",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:99,
+        stock:36,
+        image:"images/prime-video-owner.png"
+      },
+      {
+        category:"netflix",
+        title:"Netflix Individual",
+        product:"Netflix Account",
+        plan:"Netflix Individual",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:99,
+        stock:"out",
+        image:"images/netflix-individual.png"
+      },
+      {
+        category:"netflix",
+        title:"Netflix Owner",
+        product:"Netflix Account",
+        plan:"Netflix Owner",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:199,
+        stock:"out",
+        image:"images/netflix-owner.png"
+      },
+      {
+        category:"capcut",
+        title:"CapCut Pro Share",
+        product:"CapCut Account",
+        plan:"CapCut Pro Share",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:49,
+        stock:11,
+        image:"images/capcut-pro-share.png"
+      },
+      {
+        category:"capcut",
+        title:"CapCut Pro",
+        product:"CapCut Account",
+        plan:"CapCut Pro",
+        validity:"30 Days",
+        guarantee:"Guarantee",
+        price:79,
+        stock:17,
+        image:"images/capcut-pro.png"
+      }
+    ];
+
+    const filterBox = document.getElementById("filter");
+    const cardBox = document.getElementById("cards");
+    let activeCategory = "all";
+
+    function stockData(stock){
+      if(stock === "out"){
+        return {
+          text:"🔥 Stock Out",
+          cls:"out",
+          disabled:true
+        };
+      }
+
+      if(stock === "restock"){
+        return {
+          text:"🔥 Restock",
+          cls:"restock",
+          disabled:false
+        };
+      }
+
+      return {
+        text:`🔥 Stock ${stock}`,
+        cls:"in",
+        disabled:false
+      };
+    }
+
+    function renderFilters(){
+      filterBox.innerHTML = categories.map(([value,label]) => `
+        <button class="${activeCategory === value ? "active" : ""}" data-category="${value}">
+          ${label}
+        </button>
+      `).join("");
+    }
+
+    function renderCards(){
+      const list = products
+        .map((product,index) => ({product,index}))
+        .filter(({product}) => activeCategory === "all" || product.category === activeCategory)
+        .sort((a,b) => a.product.price - b.product.price);
+
+      if(!list.length){
+        cardBox.innerHTML = `<div class="empty">No product found.</div>`;
+        return;
+      }
+
+      cardBox.innerHTML = list.map(({product,index}) => {
+        const stock = stockData(product.stock);
+
+        return `
+          <div class="card" tabindex="0">
+            <div class="img-box">
+              <img src="${product.image}" alt="${product.title}">
+              <div class="stock ${stock.cls}">
+                <span>${stock.text}</span>
+              </div>
+            </div>
+
+            <div class="content">
+              <div class="title">${product.title}</div>
+
+              <div class="info">
+                <span>Validity: ${product.validity}</span>
+                <span>${product.guarantee}</span>
+              </div>
+
+              <div class="bottom">
+                <div class="price">৳${product.price}</div>
+                <button class="buy ${stock.disabled ? "disabled" : ""}" data-index="${index}">
+                  ${stock.disabled ? "Out" : "Buy"}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    filterBox.addEventListener("click", event => {
+      const button = event.target.closest("button");
+
+      if(!button) return;
+
+      activeCategory = button.dataset.category;
+      renderFilters();
+      renderCards();
+    });
+
+    cardBox.addEventListener("click", event => {
+      const buyButton = event.target.closest(".buy");
+
+      if(buyButton && !buyButton.classList.contains("disabled")){
+        event.stopPropagation();
+
+        const product = products[buyButton.dataset.index];
+        const message = `আমি ${product.product} কিনতে চাই। যার প্রাইস ${product.price} টাকা। প্যাকেজ: ${product.plan}`;
+
+        window.open(
+          `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`,
+          "_blank"
+        );
+
+        return;
+      }
+
+      const card = event.target.closest(".card");
+
+      if(!card) return;
+
+      document.querySelectorAll(".card").forEach(item => {
+        item.classList.remove("is-active");
+      });
+
+      card.classList.add("is-active");
+    });
+
+    renderFilters();
+    renderCards();
   </script>
 </body>
 </html>
